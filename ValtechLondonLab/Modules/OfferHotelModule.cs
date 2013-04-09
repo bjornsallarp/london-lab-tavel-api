@@ -7,6 +7,7 @@
     using Nancy;
 
     using ValtechLondonLab.DAL;
+    using ValtechLondonLab.DAL.Entities;
 
     public class OfferHotelModule : NancyModule
     {
@@ -22,28 +23,43 @@
 
             this.ImageDownloadClient = imageDownloadClient;
 
-            this.Get["/hotel/{hotelid}"] = parameters =>
-                { 
-                    var hotel = offersRepository.GetHotel(parameters.hotelid);
+            this.Get["/hotel/{hotelid}"] = this.GetHotel;
 
-                    if (hotel == null)
-                    {
-                        return new Response { StatusCode = HttpStatusCode.NotFound };
-                    }
-
-                    return hotel;
-                };
-
-            this.Get["/hotel/{hotelid}/image/width/{width}/height/{height}"] =
-                parameters => this.GetHotelImage(parameters.hotelid, parameters.width, parameters.height);
+            this.Get["/hotel/{hotelid}/image/width/{width}/height/{height}"] = this.GetHotelImage;
         }
 
         private ITravelOffersRepository TravelOffersRepository { get; set; }
 
         private HttpClient ImageDownloadClient { get; set; }
 
-        public Response GetHotelImage(string hotelId, string imageWidth, string imageHeight)
+        public object GetHotel(dynamic parameters)
         {
+            Hotel hotel = this.TravelOffersRepository.GetHotel(parameters.hotelid);
+
+            if (hotel == null)
+            {
+                return new Response { StatusCode = HttpStatusCode.NotFound };
+            }
+
+            var hotelModel =
+                new
+                    {
+                        html = hotel.Html,
+                        grade = hotel.Grade,
+                        name = hotel.Name,
+                        url = hotel.Url,
+                        hasImage = !string.IsNullOrEmpty(hotel.ImageUrl)
+                    };
+
+            return hotelModel;
+        }
+
+        public Response GetHotelImage(dynamic parameters)
+        {
+            var hotelId = parameters.hotelid;
+            var imageWidth = parameters.width;
+            var imageHeight = parameters.height;
+
             var response = new Response();
 
             var hotel = this.TravelOffersRepository.GetHotel(hotelId);

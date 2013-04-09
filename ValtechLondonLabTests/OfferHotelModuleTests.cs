@@ -11,6 +11,8 @@
     using Nancy;
     using Nancy.Testing;
 
+    using Newtonsoft.Json;
+
     using ValtechLondonLab.DAL;
     using ValtechLondonLab.DAL.Entities;
     using ValtechLondonLab.Modules;
@@ -57,14 +59,24 @@
 
             // Assert
             result.StatusCode.Should().Be(HttpStatusCode.OK);
-            var jsonObject = result.Body.DeserializeJson<Hotel>();
 
-            jsonObject.Name.Should().Be(hotel.Name);
-            jsonObject.ImageUrl.Should().Be(hotel.ImageUrl);
-            jsonObject.Grade.Should().Be(hotel.Grade);
-            jsonObject.Html.Should().Be(hotel.Html);
-            jsonObject.Id.Should().Be(hotel.Id);
-            jsonObject.Url.Should().Be(hotel.Url);
+            var hotelModel =
+                new
+                {
+                    html = string.Empty,
+                    grade = 0.0m,
+                    name = string.Empty,
+                    url = string.Empty,
+                    hasImage = false
+                };
+
+            var jsonObject = JsonConvert.DeserializeAnonymousType(result.Body.AsString(), hotelModel);
+
+            jsonObject.name.Should().Be(hotel.Name);
+            jsonObject.hasImage.Should().BeTrue();
+            jsonObject.grade.Should().Be(hotel.Grade);
+            jsonObject.html.Should().Be(hotel.Html);
+            jsonObject.url.Should().Be(hotel.Url);
         }
 
         [TestMethod]
