@@ -12,7 +12,7 @@
     {
         public DestinationsModule(ITravelOffersRepository offersRepository)
         {
-            this.Get["/destinations"] = _ => offersRepository.GetAllDestinations();
+            this.Get["/destinations"] = _ => offersRepository.GetAllDestinations().OrderBy(s => s);
 
             this.Get["/destinations/{airport}"] = parameters =>
                 {
