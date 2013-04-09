@@ -132,7 +132,7 @@
 
             // Act
             var result = browser.Get(
-                "/hotel/1/image/width/100/height/100",
+                "/offer/hotel/1/image/width/100/height/100",
                 with =>
                 {
                     with.HttpRequest();
