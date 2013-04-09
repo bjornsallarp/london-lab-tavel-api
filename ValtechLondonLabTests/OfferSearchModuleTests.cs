@@ -1,7 +1,6 @@
 ﻿namespace ValtechLondonLabTests
 {
     using System;
-    using System.Collections.Generic;
 
     using FluentAssertions;
 
@@ -10,10 +9,7 @@
     using Moq;
 
     using Nancy;
-    using Nancy.Serializers.Json.ServiceStack;
     using Nancy.Testing;
-
-    using ServiceStack.Text;
 
     using ValtechLondonLab.DAL;
     using ValtechLondonLab.DAL.Entities;
